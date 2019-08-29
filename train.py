@@ -225,7 +225,10 @@ def main():
 
         trigger += 1
 
-        if val_log['loss'] < best_loss:
+        if epoch == 0:
+            best_loss = val_log['loss']
+
+        if val_log['loss'] <= best_loss:
             torch.save(model.state_dict(), os.path.join(model_dir, 'model.pth'))
             best_loss = val_log['loss']
             print("=> saved best model")
