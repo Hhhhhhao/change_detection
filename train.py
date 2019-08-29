@@ -4,6 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 from collections import OrderedDict
 from datetime import datetime
+from sklearn.externals import joblib
 
 import torch
 import torch.nn as nn
@@ -45,7 +46,7 @@ def parse_args():
                         help='number of total epochs to run')
     parser.add_argument('--early-stop', default=20, type=int,
                         metavar='N', help='early stopping (default: 20)')
-    parser.add_argument('-b', '--batch-size', default=2, type=int,
+    parser.add_argument('-b', '--batch-size', default=16, type=int,
                         metavar='N', help='mini-batch size (default: 16)')
     parser.add_argument('--optimizer', default='Adam',
                         choices=['Adam', 'SGD'],
@@ -90,9 +91,6 @@ def train(train_loader, model, criterion, optimizer):
     pbar = tqdm(enumerate(train_loader), total=len(train_loader))
 
     for i, (input, target) in pbar:
-        # input = input.cuda()
-        # target = target.cuda()
-
         # compute output
         outputs = model(input)
         loss = 0
@@ -130,9 +128,6 @@ def validate(val_loader, model, criterion):
 
     with torch.no_grad():
         for i, (input, target) in enumerate(val_loader):
-            # input = input.cuda()
-            # target = target.cuda()
-
             # compute output
             outputs = model(input)
             loss = 0
@@ -167,19 +162,25 @@ def main():
         print('{0}: {1}'.format(arg, getattr(args, arg)))
     print('------------')
 
+    with open('models/%s/args.txt' %args.name, 'w') as f:
+        for arg in vars(args):
+            print('%s: %s' %(arg, getattr(args, arg)), file=f)
+
+    joblib.dump(args, 'models/%s/args.pkl' %args.name)
+
     # define loss function (criterion)
     if args.loss == 'BCEWithLogitsLoss':
         criterion = nn.BCEWithLogitsLoss().cuda()
     else:
         criterion = losses.__dict__[args.loss]().cuda()
 
-    # cudnn.benchmark = True
-
     # create model
     print("=> creating model {}".format(args.arch))
     model = models.__dict__[args.arch](args.in_ch, args.out_ch)
 
-    # model = model.cuda()
+    if torch.cuda.is_available():
+        cudnn.benchmark = True
+        model = model.cuda()
 
     print(count_params(model))
 

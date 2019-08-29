@@ -38,6 +38,7 @@ def save_example(folder, epoch, model, data_loader):
 
             preds = model(inputs)
             preds = preds[-1]
+            preds = torch.sigmoid(preds)
 
             inputs, targets, preds = inputs.numpy(), targets.numpy(), preds.numpy()
             inputs, targets, preds = (inputs * 255).astype('uint8'), (targets * 255).astype('uint8'), (preds * 255).astype('uint8')

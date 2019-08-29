@@ -10,7 +10,11 @@ from skimage.io import imread, imsave
 
 import torch
 
-from metrics import iou_score
+import models
+from metrics import dice_coef, batch_iou, mean_iou, iou_score
+import losses
+from utils import count_params
+from data_loaders import RssraiDataLoader
 
 
 def parse_args():
@@ -41,42 +45,28 @@ def main():
 
     # create model
     print("=> creating model %s" %args.arch)
-    model = archs.__dict__[args.arch](args)
+    model = models.__dict__[args.arch](args)
 
-    model = model.cuda()
-
-    # Data loading code
-    img_paths = glob('input/' + args.dataset + '/images/*')
-    mask_paths = glob('input/' + args.dataset + '/masks/*')
-
-    train_img_paths, val_img_paths, train_mask_paths, val_mask_paths = \
-        train_test_split(img_paths, mask_paths, test_size=0.2, random_state=41)
+    if torch.cuda.is_available():
+        model = model.cuda()
 
     model.load_state_dict(torch.load('models/%s/model.pth' %args.name))
     model.eval()
 
-    val_dataset = Dataset(args, val_img_paths, val_mask_paths)
-    val_loader = torch.utils.data.DataLoader(
-        val_dataset,
+    val_loader = RssraiDataLoader(
+        which_set='test',
         batch_size=args.batch_size,
-        shuffle=False,
-        pin_memory=True,
-        drop_last=False)
+        img_size=args.img_size,
+        shuffle=False
+    )
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
 
         with torch.no_grad():
             for i, (input, target) in tqdm(enumerate(val_loader), total=len(val_loader)):
-                input = input.cuda()
-                target = target.cuda()
-
                 # compute output
-                if args.deepsupervision:
-                    output = model(input)[-1]
-                else:
-                    output = model(input)
-
+                output = model(input)[-1]
                 output = torch.sigmoid(output).data.cpu().numpy()
                 img_paths = val_img_paths[args.batch_size*i:args.batch_size*(i+1)]
 
@@ -93,6 +83,7 @@ def main():
 
         mask = mask.astype('float32') / 255
         pb = pb.astype('float32') / 255
+
 
         '''
         plt.figure()
