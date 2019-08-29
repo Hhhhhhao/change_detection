@@ -46,7 +46,7 @@ def parse_args():
                         help='number of total epochs to run')
     parser.add_argument('--early-stop', default=20, type=int,
                         metavar='N', help='early stopping (default: 20)')
-    parser.add_argument('-b', '--batch-size', default=16, type=int,
+    parser.add_argument('-b', '--batch_size', default=16, type=int,
                         metavar='N', help='mini-batch size (default: 16)')
     parser.add_argument('--optimizer', default='Adam',
                         choices=['Adam', 'SGD'],
@@ -190,8 +190,8 @@ def main():
     else:
         raise ValueError('optimizer not specified')
 
-    train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=args.img_size, shuffle=True)
-    val_loader = RssraiDataLoader(which_set='val', batch_size=args.batch_size, img_size=args.img_size, shuffle=False)
+    train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=int(args.img_size), shuffle=True)
+    val_loader = RssraiDataLoader(which_set='val', batch_size=args.batch_size, img_size=int(args.img_size), shuffle=False)
 
     log = pd.DataFrame(index=[], columns=[
         'epoch', 'lr', 'loss', 'iou', 'val_loss', 'val_iou'
