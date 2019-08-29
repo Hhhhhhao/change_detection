@@ -36,26 +36,28 @@ class RssraiDataset(Dataset):
         img = img.transpose((2, 0, 1))
         mask = mask[:, :, np.newaxis]
         mask = mask.transpose((2, 0, 1))
-
         return img, mask
 
 
 if __name__ == '__main__':
     from tqdm import tqdm
-    from torch.utils.data import DataLoader
+    import matplotlib.pyplot as plt
+    import cv2
 
     train_dataset = RssraiDataset(which_set='train')
     print('length of the dataset: {}'.format(len(train_dataset)))
 
-    data_loader = DataLoader(
-        train_dataset,
-        batch_size=1,
-        shuffle=True,
-        pin_memory=True,
-        drop_last=True)
-
-    for i, (input, mask) in tqdm(enumerate(data_loader), total=len(data_loader)):
+    for i, (input, mask) in tqdm(enumerate(train_dataset), total=len(train_dataset)):
         print('input image shape:{}'.format(input.shape))
         print('mask shape:{}'.format(mask.shape))
+        input = input.transpose(1, 2, 0)
+
+        plt.imshow(input[:, :, :3])
+        plt.show()
+
+        cv2.imshow('image', input[:, :, :3])
+        cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
         break
 

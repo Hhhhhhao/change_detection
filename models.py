@@ -58,13 +58,13 @@ class ResBlock(nn.Module):
         return out
 
 
-class NestedUnet(nn.Module):
+class NestedUNet(nn.Module):
     """
     Implementation of nested Unet (Unet++)
     """
     
     def __init__(self, in_ch=3, out_ch=1):
-        super(NestedUnet, self).__init__()
+        super(NestedUNet, self).__init__()
 
         n = 32
         filters = [n, n * 2, n * 4, n * 8, n * 16]
@@ -128,5 +128,5 @@ class NestedUnet(nn.Module):
 
 if __name__ == '__main__':
     a = torch.ones((16, 6, 256, 256))
-    Unet = NestedUnet(in_ch=6, out_ch=1)
+    Unet = NestedUNet(in_ch=6, out_ch=1)
     output = Unet(a)
