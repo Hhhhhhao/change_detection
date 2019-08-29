@@ -162,11 +162,11 @@ def main():
         print('{0}: {1}'.format(arg, getattr(args, arg)))
     print('------------')
 
-    with open('models/%s/args.txt' %args.name, 'w') as f:
+    with open('{}/args.txt'.format(model_dir), 'w') as f:
         for arg in vars(args):
             print('%s: %s' %(arg, getattr(args, arg)), file=f)
 
-    joblib.dump(args, 'models/%s/args.pkl' %args.name)
+    joblib.dump(args, '{}/args.pkl'.format(model_dir))
 
     # define loss function (criterion)
     if args.loss == 'BCEWithLogitsLoss':
