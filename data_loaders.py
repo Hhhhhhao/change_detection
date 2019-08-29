@@ -52,7 +52,6 @@ class RssraiDataLoader(DataLoader):
             batch_size=1, # batch_size set to 1 as we use only 1 full images to extract many patches
             shuffle=self.shuffle,
             num_workers=0,
-            pin_memory=True,
             drop_last=self.shuffle,
             collate_fn=partial(collate_fn, batch_size=self.batch_size, img_size=self.img_size))
 
