@@ -24,10 +24,10 @@ def collate_fn(data, batch_size, img_size):
 
     if torch.cuda.is_available():
         batch_x = torch.cuda.FloatTensor(batch_x)
-        batch_y = torch.cuda.Tensor(batch_y)
+        batch_y = torch.cuda.LongTensor(batch_y)
     else:
         batch_x = torch.FloatTensor(batch_x)
-        batch_y = torch.Tensor(batch_y)
+        batch_y = torch.LongTensor(batch_y)
 
     return batch_x, batch_y
 
