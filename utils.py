@@ -42,6 +42,8 @@ def save_example(folder, epoch, model, data_loader):
 
             if torch.cuda.is_available():
                 preds = preds.cpu()
+                inputs = inputs.cpu()
+                targets = targets.cpu()
 
             inputs, targets, preds = inputs.numpy(), targets.numpy(), preds.numpy()
             inputs, targets, preds = (inputs * 255).astype('uint8'), (targets * 255).astype('uint8'), (preds * 255).astype('uint8')
