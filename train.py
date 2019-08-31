@@ -193,7 +193,7 @@ def main():
         raise ValueError('optimizer not specified')
 
     train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=args.img_size, shuffle=True)
-    val_loader = RssraiDataLoader(which_set='val', batch_size=max(1, int(args.batch_size/2)), img_size=args.img_size * 2, shuffle=True)
+    val_loader = RssraiDataLoader(which_set='val', batch_size=4, img_size=512, shuffle=True)
 
     log = pd.DataFrame(index=[], columns=[
         'epoch', 'lr', 'loss', 'iou', 'val_loss', 'val_iou'
