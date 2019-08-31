@@ -57,7 +57,7 @@ def parse_args():
                         metavar='LR', help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float,
                         help='momentum')
-    parser.add_argument('--weight-decay', default=1e-4, type=float,
+    parser.add_argument('--weight-decay', default=1e-6, type=float,
                         help='weight decay')
     args = parser.parse_args()
 
@@ -191,7 +191,7 @@ def main():
         raise ValueError('optimizer not specified')
 
     train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=int(args.img_size), shuffle=True)
-    val_loader = RssraiDataLoader(which_set='val', batch_size=args.batch_size, img_size=int(args.img_size), shuffle=False)
+    val_loader = RssraiDataLoader(which_set='val', batch_size=max(1, int(args.batch_size/2)), img_size=int(args.img_size), shuffle=False)
 
     log = pd.DataFrame(index=[], columns=[
         'epoch', 'lr', 'loss', 'iou', 'val_loss', 'val_iou'

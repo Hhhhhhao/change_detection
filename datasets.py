@@ -52,10 +52,10 @@ if __name__ == '__main__':
         print('mask shape:{}'.format(mask.shape))
         input = input.transpose(1, 2, 0)
 
-        plt.imshow(input[:, :, :3])
+        plt.imshow((input[:, :, :3] * 255).astype('uint8'))
         plt.show()
 
-        cv2.imshow('image', input[:, :, :3])
+        cv2.imshow('image', input[:, :, :3] * 255)
         cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
