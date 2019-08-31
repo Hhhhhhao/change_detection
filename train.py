@@ -33,7 +33,7 @@ def parse_args():
                         help='model architecture: ' +
                             ' | '.join(arch_names) +
                             ' (default: NestedUNet)')
-    parser.add_argument('--num_filters', default=64, type=int,
+    parser.add_argument('--num_filters', default=32, type=int,
                         help='number of starting filters in CNN.')
     parser.add_argument('--in_ch', default=8, type=int,
                         help='input channels')
