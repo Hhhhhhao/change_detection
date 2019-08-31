@@ -12,8 +12,8 @@ def collate_fn(data, batch_size, img_size):
 
     for i in range(batch_size):
         # randomly crop image and mask
-        s_x = np.random.randint(0, img.shape[1] - img_size)
-        s_y = np.random.randint(0, img.shape[2] - img_size)
+        s_x = np.random.randint(0, img.shape[1] - img_size + 1)
+        s_y = np.random.randint(0, img.shape[2] - img_size + 1)
         x = img[:, s_x:s_x + img_size, s_y:s_y + img_size]
         y = mask[:, s_x:s_x + img_size, s_y:s_y + img_size]
         batch_x.append(x)

@@ -1,0 +1,14 @@
+name: baseline
+img_size: 256
+arch: NestedUNet
+num_filters: 32
+in_ch: 8
+out_ch: 1
+loss: BCEDiceLoss
+epochs: 1000
+early_stop: 30
+batch_size: 16
+optimizer: Adam
+lr: 0.0002
+momentum: 0.9
+weight_decay: 1e-06

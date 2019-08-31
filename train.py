@@ -27,7 +27,7 @@ def parse_args():
 
     parser.add_argument('--name', default='baseline',
                         help='model name: (default: arch+timestamp)')
-    parser.add_argument('--img_size', default=256, help='size of training image patches')
+    parser.add_argument('--img_size', default=256, type=int, help='size of training image patches')
     parser.add_argument('--arch', '-a', metavar='ARCH', default='NestedUNet',
                         choices=arch_names,
                         help='model architecture: ' +
@@ -192,8 +192,8 @@ def main():
     else:
         raise ValueError('optimizer not specified')
 
-    train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=int(args.img_size), shuffle=True)
-    val_loader = RssraiDataLoader(which_set='val', batch_size=max(1, int(args.batch_size/2)), img_size=int(args.img_size), shuffle=False)
+    train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=args.img_size, shuffle=True)
+    val_loader = RssraiDataLoader(which_set='val', batch_size=max(1, int(args.batch_size/2)), img_size=args.img_size * 2, shuffle=True)
 
     log = pd.DataFrame(index=[], columns=[
         'epoch', 'lr', 'loss', 'iou', 'val_loss', 'val_iou'
