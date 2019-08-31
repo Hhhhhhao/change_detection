@@ -176,7 +176,7 @@ def main():
 
     # create model
     print("=> creating model {}".format(args.arch))
-    model = models.__dict__[args.arch](args.in_ch, args.out_ch, arg.num_filters)
+    model = models.__dict__[args.arch](args.in_ch, args.out_ch, args.num_filters)
 
     if torch.cuda.is_available():
         cudnn.benchmark = True
