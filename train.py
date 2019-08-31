@@ -33,6 +33,8 @@ def parse_args():
                         help='model architecture: ' +
                             ' | '.join(arch_names) +
                             ' (default: NestedUNet)')
+    parser.add_argument('--num_filters', default=64, type=int,
+                        help='number of starting filters in CNN.')
     parser.add_argument('--in_ch', default=8, type=int,
                         help='input channels')
     parser.add_argument('--out_ch', default=1, type=int,
@@ -174,7 +176,7 @@ def main():
 
     # create model
     print("=> creating model {}".format(args.arch))
-    model = models.__dict__[args.arch](args.in_ch, args.out_ch)
+    model = models.__dict__[args.arch](args.in_ch, args.out_ch, arg.num_filters)
 
     if torch.cuda.is_available():
         cudnn.benchmark = True

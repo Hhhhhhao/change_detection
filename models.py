@@ -63,10 +63,9 @@ class NestedUNet(nn.Module):
     Implementation of nested Unet (Unet++)
     """
     
-    def __init__(self, in_ch=3, out_ch=1):
+    def __init__(self, in_ch=3, out_ch=1, n=32):
         super(NestedUNet, self).__init__()
 
-        n = 32
         filters = [n, n * 2, n * 4, n * 8, n * 16]
 
         self.conv0_0 = ResBlock(in_ch, filters[0])
