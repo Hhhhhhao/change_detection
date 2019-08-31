@@ -3,18 +3,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class BCEDiceLoss(nn.Module):
-    def __init__(self):
-        super(BCEDiceLoss, self).__init__()
+def dice_loss(pred, target, smooth=1.):
+    pred = pred.contiguous()
+    target = target.contiguous()
 
-    def forward(self, input, target):
-        bce = F.binary_cross_entropy_with_logits(input, target)
-        smooth = 1e-5
-        input = torch.sigmoid(input)
-        num = target.size(0)
-        input = input.view(num, -1)
-        target = target.view(num, -1)
-        intersection = (input * target)
-        dice = (2. * intersection.sum(1) + smooth) / (input.sum(1) + target.sum(1) + smooth)
-        dice = 1 - dice.sum() / num
-        return 0.5 * bce + dice
+    intersection = (pred * target).sum(dim=2).sum(dim=2)
+
+    loss = (1 - ((2. * intersection + smooth) / (pred.sum(dim=2).sum(dim=2) + target.sum(dim=2).sum(dim=2) + smooth)))
+
+    return loss.mean()
+
+
+class BCEDiceLoss(nn.Module):
+    def __init__(self, alpha=0.5):
+        super(BCEDiceLoss, self).__init__()
+        self.alpha = alpha
+
+    def forward(self, pred, target):
+        bce = F.binary_cross_entropy_with_logits(pred, target)
+
+        pred = F.sigmoid(pred)
+        dice = dice_loss(pred, target)
+
+        loss = bce * self.alpha + dice * (1 - self.alpha)
+        return loss

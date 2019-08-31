@@ -46,7 +46,7 @@ def parse_args():
                             ' (default: BCEDiceLoss)')
     parser.add_argument('--epochs', default=1000, type=int, metavar='N',
                         help='number of total epochs to run')
-    parser.add_argument('--early-stop', default=20, type=int,
+    parser.add_argument('--early-stop', default=30, type=int,
                         metavar='N', help='early stopping (default: 20)')
     parser.add_argument('-b', '--batch_size', default=16, type=int,
                         metavar='N', help='mini-batch size (default: 16)')
