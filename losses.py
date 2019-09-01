@@ -41,9 +41,9 @@ class BCEDiceLoss(nn.Module):
         self.alpha = alpha
 
     def forward(self, pred, target, weight):
-        bce = weighted_binary_cross_entropy(pred, target, weight)
-
         pred = F.sigmoid(pred)
+        
+        bce = weighted_binary_cross_entropy(pred, target, weight)
         dice = dice_loss(pred, target)
 
         loss = bce + dice * self.alpha
