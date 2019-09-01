@@ -3,18 +3,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def weighted_binary_cross_entropy(output, target, weight=None):
-    output = torch.sigmoid(output)
-    output = torch.clamp(output, min=1e-8, max=(1-1e-8))
+def weighted_binary_cross_entropy(sigmoid_x, targets, pos_weight, weight=None, size_average=True, reduce=True):
+    """
+    Args:
+        sigmoid_x: predicted probability of size [N,C], N sample and C Class. Eg. Must be in range of [0,1], i.e. Output from Sigmoid.
+        targets: true value, one-hot-like vector of size [N,C]
+        pos_weight: Weight for postive sample
+    """
+    if not (targets.size() == sigmoid_x.size()):
+        raise ValueError("Target size ({}) must be the same as input size ({})".format(targets.size(), sigmoid_x.size()))
+
+    loss = -pos_weight* targets * sigmoid_x.log() - (1-targets)*(1-sigmoid_x).log()
 
     if weight is not None:
+        loss = loss * weight
 
-        loss = weight * (target * torch.log(output)) + \
-               (1 - weight) * ((1 - target) * torch.log(1 - output))
+    if not reduce:
+        return loss
+    elif size_average:
+        return loss.mean()
     else:
-        loss = target * torch.log(output) + (1 - target) * torch.log(1 - output)
-
-    return torch.neg(torch.mean(loss))
+        return loss.sum()
 
 
 def dice_loss(pred, target, smooth=1e-2):
@@ -37,5 +46,6 @@ class BCEDiceLoss(nn.Module):
         pred = F.sigmoid(pred)
         dice = dice_loss(pred, target)
 
-        loss = bce * self.alpha + dice * (1 - self.alpha)
+        loss = bce + dice * self.alpha
         return loss
+    
