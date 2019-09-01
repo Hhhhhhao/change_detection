@@ -231,7 +231,7 @@ def main():
             best_loss = val_log['loss']
 
         if val_log['loss'] <= best_loss:
-            torch.save(model.state_dict(), os.path.join(model_dir, 'model.pth'))
+            torch.save(model.state_dict(), os.path.join(model_dir, 'model_best.pth'))
             best_loss = val_log['loss']
             print("=> saved best model")
             trigger = 0
@@ -241,6 +241,7 @@ def main():
             if trigger >= args.early_stop:
                 print("=> early stopping")
                 break
+        torch.save(model.state_dict(), os.path.join(model_dir, 'model_final.pth'))
 
         torch.cuda.empty_cache()
 
