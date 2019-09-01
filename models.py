@@ -95,6 +95,7 @@ class NestedUNet(nn.Module):
         self.final2 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
         self.final3 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
         self.final4 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+        self.final5 = nn.Conv2d(4, out_ch, kernel_size=1)
 
     def forward(self, x):
 
@@ -122,8 +123,9 @@ class NestedUNet(nn.Module):
         output2 = self.final2(x0_2)
         output3 = self.final3(x0_3)
         output4 = self.final4(x0_4)
+        output5 = self.final5(torch.cat((output1, output2, output3, output4)))
 
-        return [output1, output2, output3, output4]
+        return [output1, output2, output3, output4, output5]
 
 
 if __name__ == '__main__':

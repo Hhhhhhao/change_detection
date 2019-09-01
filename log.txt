@@ -1,1 +1,0 @@
-NestedUnet + Weighted Binary Cross Entropy loss
