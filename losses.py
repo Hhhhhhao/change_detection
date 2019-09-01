@@ -5,6 +5,8 @@ import torch.nn.functional as F
 
 def weighted_binary_cross_entropy(output, target, weight=None):
     output = torch.sigmoid(output)
+    output = torch.clamp(output, min=1e-8, max=(1-1e-8))
+
     if weight is not None:
 
         loss = weight * (target * torch.log(output)) + \
