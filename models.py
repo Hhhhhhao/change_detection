@@ -125,6 +125,7 @@ class NestedUNet(nn.Module):
 
         return [output1, output2, output3, output4]
 
+
 if __name__ == '__main__':
     a = torch.ones((16, 6, 256, 256))
     Unet = NestedUNet(in_ch=6, out_ch=1)
