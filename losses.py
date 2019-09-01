@@ -26,7 +26,7 @@ def weighted_binary_cross_entropy(sigmoid_x, targets, pos_weight, weight=None, s
         return loss.sum()
 
 
-def dice_loss(pred, target, smooth=1e-2):
+def dice_loss(pred, target, smooth=1e-8):
     iflat = pred.view(-1)
     tflat = target.view(-1)
     intersection = (iflat * tflat).sum()
