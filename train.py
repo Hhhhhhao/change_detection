@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
 import models
 import losses
@@ -185,12 +186,14 @@ def main():
     print(count_params(model))
 
     if args.optimizer == 'Adam':
-        optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, weight_decay=args.weight_decay)
+        optimizer = optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, weight_decay=args.weight_decay)
     elif args.optimizer == 'SGD':
         optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
             momentum=args.momentum, weight_decay=args.weight_decay)
     else:
         raise ValueError('optimizer not specified')
+
+    scheduler = CosineAnnealingLR(optimizer, T_max=100, eta_min=1e-8)
 
     train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=args.img_size, shuffle=True)
     val_loader = RssraiDataLoader(which_set='val', batch_size=4, img_size=512, shuffle=True)
@@ -209,6 +212,8 @@ def main():
         train_log = train(train_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer)
         # evaluate on validation set
         val_log = validate(val_loader=val_loader, model=model, criterion=criterion)
+        # update learning rate
+        scheduler.step()
 
         print('loss {0:.4f} - iou {1:.4f} - val_loss {2:.4f} - val_iou {3:.4f}'.format(train_log['loss'], train_log['iou'], val_log['loss'], val_log['iou']))
 
