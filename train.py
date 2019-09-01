@@ -92,12 +92,12 @@ def train(train_loader, model, criterion, optimizer):
 
     pbar = tqdm(enumerate(train_loader), total=len(train_loader))
 
-    for i, (input, target) in pbar:
+    for i, (input, target, loss_weight) in pbar:
         # compute output
         outputs = model(input)
         loss = 0
         for output in outputs:
-            loss += criterion(output, target)
+            loss += criterion(output, target, loss_weight)
         loss /= len(outputs)
         iou = iou_score(outputs[-1], target)
 
@@ -127,12 +127,12 @@ def validate(val_loader, model, criterion):
     model.eval()
 
     with torch.no_grad():
-        for i, (input, target) in enumerate(val_loader):
+        for i, (input, target, loss_weight) in enumerate(val_loader):
             # compute output
             outputs = model(input)
             loss = 0
             for output in outputs:
-                loss += criterion(output, target)
+                loss += criterion(output, target, loss_weight)
             loss /= len(outputs)
             iou = iou_score(outputs[-1], target)
 

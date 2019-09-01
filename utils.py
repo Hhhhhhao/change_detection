@@ -4,6 +4,19 @@ import torch
 import matplotlib.pyplot as plt
 
 
+def calculate_bce_loss(masks):
+    y_minus = 0
+    y_plus = 0
+    single_total = masks.shape[-1] * masks.shape[-2]
+    for m in masks:
+        black = len(np.where(m[0]==0)[0])
+        white = single_total - black
+        y_minus += black
+        y_plus += white
+
+    return y_minus / (y_minus + y_plus)
+
+
 def get_pixels(image, boarder_height, boarder_width):
     """
     Get the white pixels from an 2D image, with boarder removed defined by boarder height and boarder width

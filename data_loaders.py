@@ -3,24 +3,12 @@ import torch
 from torch.utils.data import DataLoader
 from functools import partial
 from datasets import RssraiDataset
+from utils import calculate_bce_loss
 
 
 def collate_fn(data, batch_size, img_size):
     img, mask = data[0]
     batch_x, batch_y = [], []
-
-    # # randomly crop image and mask at white pixels
-    # pixels = get_pixels(mask[0], img_size, img_size)
-    # num_pix = len(pixels[0])
-
-    # while num_img < batch_size:
-        # if num_pix == 0:
-        #     s_x = np.random.randint(0, img.shape[1] - img_size + 1)
-        #     s_y = np.random.randint(0, img.shape[2] - img_size + 1)
-        # else:
-        #     index = np.random.randint(num_pix)
-        #     s_x = pixels[0][index]
-        #     s_y = pixels[1][index]
 
     for i in range(batch_size):
         s_x = np.random.randint(0, img.shape[1] - img_size + 1)
@@ -32,6 +20,7 @@ def collate_fn(data, batch_size, img_size):
 
     batch_x = np.array(batch_x)
     batch_y = np.array(batch_y)
+    loss_weight = calculate_bce_loss(batch_y)
 
     if torch.cuda.is_available():
         batch_x = torch.cuda.FloatTensor(batch_x)
@@ -40,7 +29,7 @@ def collate_fn(data, batch_size, img_size):
         batch_x = torch.FloatTensor(batch_x)
         batch_y = torch.FloatTensor(batch_y)
 
-    return batch_x, batch_y
+    return batch_x, batch_y, loss_weight
 
 
 class RssraiDataLoader(DataLoader):
@@ -70,6 +59,6 @@ class RssraiDataLoader(DataLoader):
 if __name__ == '__main__':
     data_loader = RssraiDataLoader(which_set='train', batch_size=16, img_size=256, shuffle=True)
 
-    for i, (input, mask) in enumerate(data_loader):
-        print('{}th batch: input shape {}, mask shape {}'.format(i, input.shape, mask.shape))
+    for i, (input, mask, loss_weight) in enumerate(data_loader):
+        print('{}th batch: input shape {}, mask shape {}, loss_weight{}'.format(i, input.shape, mask.shape, loss_weight))
 
