@@ -4,6 +4,24 @@ import torch
 import matplotlib.pyplot as plt
 
 
+def get_pixels(image, boarder_height, boarder_width):
+    """
+    Get the white pixels from an 2D image, with boarder removed defined by boarder height and boarder width
+    :param image: 2D image array
+    :param boarder_height: boarder height to be removed
+    :param boarder_width: boarder width to be removed
+    :return: points
+    """
+    image_height = image.shape[0]
+    image_width = image.shape[1]
+    masked_image = image.copy()
+    mask = np.zeros_like(image)
+    mask[boarder_height:image_height-boarder_height, boarder_width:image_width-boarder_width] = 1
+    masked_image[mask == 0] = 0
+    points = np.where(masked_image != 0)
+    return points
+
+
 def get_files(directory, format='tif'):
     """
     To get a list of file names in one directory, especially images
