@@ -63,7 +63,7 @@ def save_example(folder, epoch, model, data_loader):
     if epoch == 0 or epoch % 5 == 0:
         model.eval()
         with torch.no_grad():
-            inputs, targets = next(iter(data_loader))
+            inputs, targets, _ = next(iter(data_loader))
             # if torch.cuda.is_available():
             #     inputs = inputs.cuda()
 
