@@ -23,5 +23,6 @@ class BCEDiceLoss(nn.Module):
         pred = F.sigmoid(pred)
         dice = dice_loss(pred, target)
 
-        loss = bce * self.alpha + dice * (1 - self.alpha)
+        loss = bce + dice * self.alpha
         return loss
+
