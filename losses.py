@@ -36,9 +36,9 @@ def dice_loss(pred, target, smooth=1e-8):
                 (iflat.sum() + tflat.sum() + smooth))
 
 
-class BCEDiceLoss(nn.Module):
+class WBCEDiceLoss(nn.Module):
     def __init__(self, alpha=0.5):
-        super(BCEDiceLoss, self).__init__()
+        super(WBCEDiceLoss, self).__init__()
         self.alpha = alpha
 
     def forward(self, pred, target, weight):
@@ -53,38 +53,16 @@ class BCEDiceLoss(nn.Module):
         return loss
 
 
-class ContrastiveLoss(torch.nn.Module):
-    """
-    Contrastive loss function.
-    Based on:
-    """
+class BCEDiceLoss(nn.Module):
+    def __init__(self, alpha=0.5):
+        super(BCEDiceLoss, self).__init__()
+        self.alpha = alpha
 
-    def __init__(self, margin=1.0):
-        super(ContrastiveLoss, self).__init__()
-        self.margin = margin
+    def forward(self, pred, target, weight):
+        bce = F.binary_cross_entropy_with_logits(pred, target)
+        pred = F.sigmoid(pred)
+        dice = dice_loss(pred, target)
 
-    def check_type_forward(self, in_types):
-        assert len(in_types) == 3
-
-        x0_type, x1_type, y_type = in_types
-        assert x0_type.size() == x1_type.shape
-        assert x1_type.size()[0] == y_type.shape[0]
-        assert x1_type.size()[0] > 0
-        assert x0_type.dim() == 2
-        assert x1_type.dim() == 2
-        assert y_type.dim() == 1
-
-    def forward(self, x0, x1, y):
-        self.check_type_forward((x0, x1, y))
-
-        # euclidian distance
-        diff = x0 - x1
-        dist_sq = torch.sum(torch.pow(diff, 2), 1)
-        dist = torch.sqrt(dist_sq)
-
-        mdist = self.margin - dist
-        dist = torch.clamp(mdist, min=0.0)
-        loss = y * dist_sq + (1 - y) * torch.pow(dist, 2)
-        loss = torch.sum(loss) / 2.0 / x0.size()[0]
+        loss = bce + dice * self.alpha
         return loss
     

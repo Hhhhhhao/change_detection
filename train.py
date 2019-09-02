@@ -112,6 +112,8 @@ def train(train_loader, model, criterion, optimizer):
         loss.backward()
         optimizer.step()
 
+        break
+
     log = OrderedDict([
         ('loss', losses.avg),
         ('iou', ious.avg),
@@ -196,7 +198,7 @@ def main():
     scheduler = CosineAnnealingLR(optimizer, T_max=100, eta_min=1e-8)
 
     train_loader = RssraiDataLoader(which_set='train', batch_size=args.batch_size, img_size=args.img_size, shuffle=True)
-    val_loader = RssraiDataLoader(which_set='val', batch_size=4, img_size=512, shuffle=True)
+    val_loader = RssraiDataLoader(which_set='val', batch_size=1, img_size=960, shuffle=True)
 
     log = pd.DataFrame(index=[], columns=[
         'epoch', 'lr', 'loss', 'iou', 'val_loss', 'val_iou'
@@ -249,6 +251,7 @@ def main():
         torch.save(model.state_dict(), os.path.join(model_dir, 'model_final.pth'))
 
         torch.cuda.empty_cache()
+
 
 if __name__ == '__main__':
     main()
