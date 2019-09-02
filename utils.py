@@ -4,7 +4,7 @@ import torch
 import matplotlib.pyplot as plt
 
 
-def calculate_bce_loss(masks):
+def calculate_bce_loss(masks, epsilon=1e-8):
     y_minus = 0
     y_plus = 0
     single_total = masks.shape[-1] * masks.shape[-2]
@@ -14,7 +14,7 @@ def calculate_bce_loss(masks):
         y_minus += black
         y_plus += white
 
-    return y_minus / y_plus
+    return y_minus / (y_plus + epsilon)
 
 
 def get_pixels(image, boarder_height, boarder_width):
