@@ -29,7 +29,7 @@ def get_pixels(image, boarder_height, boarder_width):
     image_width = image.shape[1]
     masked_image = image.copy()
     mask = np.zeros_like(image)
-    mask[boarder_height:image_height-boarder_height, boarder_width:image_width-boarder_width] = 1
+    mask[:image_height-boarder_height, :image_width-boarder_width] = 1
     masked_image[mask == 0] = 0
     points = np.where(masked_image != 0)
     return points

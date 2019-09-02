@@ -112,8 +112,6 @@ def train(train_loader, model, criterion, optimizer):
         loss.backward()
         optimizer.step()
 
-        break
-
     log = OrderedDict([
         ('loss', losses.avg),
         ('iou', ious.avg),
