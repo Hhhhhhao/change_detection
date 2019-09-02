@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def dice_loss(pred, target, smooth=1e-2):
+def dice_loss(pred, target, smooth=1e-6):
     iflat = pred.view(-1)
     tflat = target.view(-1)
     intersection = (iflat * tflat).sum()
