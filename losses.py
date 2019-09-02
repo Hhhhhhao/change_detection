@@ -13,6 +13,7 @@ def weighted_binary_cross_entropy(sigmoid_x, targets, pos_weight, weight=None, s
     if not (targets.size() == sigmoid_x.size()):
         raise ValueError("Target size ({}) must be the same as input size ({})".format(targets.size(), sigmoid_x.size()))
 
+    sigmoid_x = sigmoid_x.clamp(min=1e-8, max=1-1e-8)
     loss = -pos_weight* targets * sigmoid_x.log() - (1-targets)*(1-sigmoid_x).log()
 
     if weight is not None:
@@ -41,12 +42,12 @@ class BCEDiceLoss(nn.Module):
         self.alpha = alpha
 
     def forward(self, pred, target, weight):
-        # pred = F.sigmoid(pred)
-        # bce = weighted_binary_cross_entropy(pred, target, weight)
-
-        bce = F.binary_cross_entropy_with_logits(pred, target)
         pred = F.sigmoid(pred)
         dice = dice_loss(pred, target)
+        bce = weighted_binary_cross_entropy(pred, target, weight)
+
+        # bce = F.binary_cross_entropy_with_logits(pred, target)
+        # pred = F.sigmoid(pred)
 
         loss = bce + dice * self.alpha
         return loss
