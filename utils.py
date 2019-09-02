@@ -14,7 +14,7 @@ def calculate_bce_loss(masks):
         y_minus += black
         y_plus += white
 
-    return y_minus / (y_minus + y_plus)
+    return y_minus / y_plus
 
 
 def get_pixels(image, boarder_height, boarder_width):
