@@ -45,7 +45,7 @@ def main():
 
     # create model
     print("=> creating model %s" %args.arch)
-    model = models.__dict__[args.arch](args)
+    model = models.__dict__[args.arch](args.in_ch, args.out_ch, args.num_filters)
 
     if torch.cuda.is_available():
         model = model.cuda()
